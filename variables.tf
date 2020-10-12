@@ -28,6 +28,12 @@ variable "login_password" {
   description = "splunk login password: admin:change"
 }
 
+variable "environment" {
+  type = string
+  default = "testing"
+  description = "tag this as Testing Environment"
+}
+
 
 locals {
     common_cpu = 2
@@ -60,6 +66,12 @@ variable "common_instance" {
         }
     }
 }
+
+variable "heavyforwarder" {
+  description = "Heavy Forwarder that does the data striping and receives syslog"
+  default = "hvyfwd"
+}
+
 
 variable "searchhead_clustering" {
     description = "search head clustering"
@@ -105,8 +117,4 @@ variable "index_clustering" {
     }
 }
 
-variable "heavyforwarder" {
-  description = "Heavy Forwarder that does the data striping and receives syslog"
-  default = "hvyfwd"
-}
 
