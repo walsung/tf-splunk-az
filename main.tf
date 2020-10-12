@@ -4,8 +4,8 @@ provider "azurerm" {
   version = "=1.44.0"
 
     #retrieve id and tenantid from azure-cli:    az account list
-  subscription_id = "59110615-c3e2-4cfc-8c4d-a0f9765fbdee"
-  tenant_id       = "53c4e8cf-11c1-4455-a96e-4051e3c42137"
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
 }
 
 resource "azurerm_resource_group" "rg_splunk" {
