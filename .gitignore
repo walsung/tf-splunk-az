@@ -1,3 +1,6 @@
+# terraform plugin
+.terraform
+
 # Prerequisites
 *.d
 
