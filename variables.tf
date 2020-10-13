@@ -12,17 +12,69 @@ variable "tenant_id" {
 }
 
 
-variable "resource_group_name" {
+# variable "resource_group_name" {
+#     description = "create 3 resource groups: Japan East, Korea South, UAE North"
+#     type = map
+#     default = {
+#         japan_east = {
+#             name = "rg-splunk-jpe",
+#             location = "Japan East",
+#         },
+#         korea_south = {
+#             name = "rg-splunk-krs",
+#             location = "Korea South",
+#         },
+#         uae_north = {
+#             name = "rg-splunk-uen"
+#             location = "UAE North",
+#         },
+#     }
+# }
+
+
+
+# variable "resource_group_name" {
+#   type        = string
+#   default = "rg-splunk"
+#   description = "cluster of splunk"
+# }
+
+variable "resource_group_name_jp" {
   type        = string
-  default = "rg-splunk"
-  description = "cluster of splunk"
+  default = "rg-splunk_jp"
+  description = "splunk common components"
 }
 
-variable "location" {
+variable "resource_group_name_kr" {
+  type        = string
+  default = "rg-splunk_kr"
+  description = "splunk search head clustering"
+}
+
+variable "resource_group_name_ue" {
+  type        = string
+  default = "rg-splunk_ue"
+  description = "splunk index clustering"
+}
+
+variable "location_jpe" {
   type        = string
   default = "Japan East"
   description = "The Azure location to use for deployment"
 }
+
+variable "location_krs" {
+  type        = string
+  default = "Korea South"
+  description = "The Azure location to use for deployment"
+}
+
+variable "location_uen" {
+  type        = string
+  default = "UAE North"
+  description = "The Azure location to use for deployment"
+}
+
 
 variable "login_password" {
   type        = string
@@ -34,6 +86,14 @@ variable "environment" {
   type = string
   default = "testing"
   description = "tag this as Testing Environment"
+}
+
+variable "container_name" {
+  default = "splunk"
+}
+
+variable "docker_image_name" {
+  default = "splunk/splunk:latest"
 }
 
 

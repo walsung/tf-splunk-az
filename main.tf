@@ -16,14 +16,38 @@ provider "azurerm" {
   features {}
 
 
-  #retrieve id and tenantid from azure-cli:    az account list
+  retrieve id and tenantid from azure-cli:    az account list
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
 }
 
-resource "azurerm_resource_group" "rg_splunk" {
-  name     = var.resource_group_name
-  location = var.location
+# resource "azurerm_resource_group" "rg_splunk" {
+#   name     = var.resource_group_name
+#   location = var.location
+#   tags = {
+#       environment = var.environment
+#   }
+# }
+
+resource "azurerm_resource_group" "rg_splunk_jp" {
+  name     = var.resource_group_name_jp
+  location = var.location_jpe
+  tags = {
+      environment = var.environment
+  }
+}
+
+resource "azurerm_resource_group" "rg_splunk_kr" {
+  name     = var.resource_group_name_kr
+  location = var.location_krs
+  tags = {
+      environment = var.environment
+  }
+}
+
+resource "azurerm_resource_group" "rg_splunk_ue" {
+  name     = var.resource_group_name_ue
+  location = var.location_uen
   tags = {
       environment = var.environment
   }
@@ -33,15 +57,15 @@ resource "azurerm_resource_group" "rg_splunk" {
 resource "azurerm_container_group" "common-instances" {
   for_each = var.common_instance
   name                = each.value.name
-  location            = azurerm_resource_group.rg_splunk.location
-  resource_group_name = azurerm_resource_group.rg_splunk.name
+  location            = azurerm_resource_group.rg_splunk_jp.location
+  resource_group_name = azurerm_resource_group.rg_splunk_jp.name
   ip_address_type     = "public"
   dns_name_label      = each.value.name
   os_type             = "linux"
 
   container {
-    name   = "splunk"
-    image  = "splunk/splunk:latest"
+    name   = var.container_name
+    image  = var.docker_image_name
     cpu    = local.common_cpu
     memory = local.common_ram
     ports {
@@ -66,15 +90,15 @@ resource "azurerm_container_group" "common-instances" {
 # create heavy forwarder
 resource "azurerm_container_group" "heavyforwarder" {
   name                = var.heavyforwarder
-  location            = azurerm_resource_group.rg_splunk.location
-  resource_group_name = azurerm_resource_group.rg_splunk.name
+  location            = azurerm_resource_group.rg_splunk_kr.location
+  resource_group_name = azurerm_resource_group.rg_splunk_kr.name
   ip_address_type     = "public"
   dns_name_label      = var.heavyforwarder
   os_type             = "linux"
 
   container {
-    name   = "splunk"
-    image  = "splunk/splunk:latest"
+    name   = var.container_name
+    image  = var.docker_image_name
     cpu    = local.idx_cpu
     memory = local.idx_ram
     ports {
@@ -109,15 +133,15 @@ resource "azurerm_container_group" "heavyforwarder" {
 resource "azurerm_container_group" "shc" {
   for_each = var.searchhead_clustering
   name                = each.value.name
-  location            = azurerm_resource_group.rg_splunk.location
-  resource_group_name = azurerm_resource_group.rg_splunk.name
+  location            = azurerm_resource_group.rg_splunk_ue.location
+  resource_group_name = azurerm_resource_group.rg_splunk_ue.name
   ip_address_type     = "public"
   dns_name_label      = each.value.name
   os_type             = "linux"
 
   container {
-    name   = "splunk"
-    image  = "splunk/splunk:latest"
+    name   = var.container_name
+    image  = var.docker_image_name
     cpu    = local.sh_cpu
     memory = local.sh_ram
     ports {
@@ -159,8 +183,8 @@ resource "azurerm_container_group" "idxc" {
   os_type             = "linux"
 
   container {
-    name   = "splunk"
-    image  = "splunk/splunk:latest"
+    name   = var.container_name
+    image  = var.docker_image_name
     cpu    = local.idx_cpu
     memory = local.idx_ram
     ports {
