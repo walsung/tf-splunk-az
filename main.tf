@@ -1,7 +1,20 @@
+#set up remote state
+terraform {
+  backend "remote" {
+    organization = "eclipse13"
+
+    workspaces {
+      name = "terr-cloud"
+    }
+  }
+}
+
 
 provider "azurerm" {
   # Whilst version is optional, we /strongly recommend/ using it to pin the version of the Provider being used
-  version = "=1.44.0"
+  version = "=2.31.1"
+  features {}
+
 
   #retrieve id and tenantid from azure-cli:    az account list
   subscription_id = var.subscription_id
