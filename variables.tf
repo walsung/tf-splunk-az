@@ -81,19 +81,19 @@ variable "searchhead_clustering" {
             name = "deployer",
         },
         sh1 = {
-            name = "sh1",
+            name = "search1",
         },
         sh2 = {
-            name = "sh2",
+            name = "search2",
         },
         sh3 = {
-            name = "sh3",
+            name = "search3",
         }
         sh4 = {
-            name = "sh3",
+            name = "search4",
         }
         sh5 = {
-            name = "sh5",
+            name = "search5",
         }
     }
 }
@@ -103,16 +103,16 @@ variable "index_clustering" {
     type = map
     default = {
         idx1 = {
-            name = "idx1",
+            name = "index1",
         },
         idx2 = {
-            name = "idx2",
+            name = "index2",
         },
         idx3 = {
-            name = "idx3",
+            name = "index3",
         },
         idx4 = {
-            name = "idx4",
+            name = "index4",
         },
     }
 }
