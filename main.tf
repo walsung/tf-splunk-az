@@ -21,44 +21,23 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-# resource "azurerm_resource_group" "rg_splunk" {
-#   name     = var.resource_group_name
-#   location = var.location
-#   tags = {
-#       environment = var.environment
-#   }
-# }
 
-resource "azurerm_resource_group" "rg_splunk_jp" {
-  name     = var.resource_group_name_jp
-  location = var.location_jpe
+
+resource "azurerm_resource_group" "rg_splunk" {
+  name     = var.resource_group_name
+  location = local.location_jpe
   tags = {
       environment = var.environment
   }
 }
 
-resource "azurerm_resource_group" "rg_splunk_kr" {
-  name     = var.resource_group_name_kr
-  location = var.location_krs
-  tags = {
-      environment = var.environment
-  }
-}
-
-resource "azurerm_resource_group" "rg_splunk_ue" {
-  name     = var.resource_group_name_ue
-  location = var.location_uen
-  tags = {
-      environment = var.environment
-  }
-}
 
 # common splunk instances
 resource "azurerm_container_group" "common-instances" {
   for_each = var.common_instance
   name                = each.value.name
-  location            = azurerm_resource_group.rg_splunk_jp.location
-  resource_group_name = azurerm_resource_group.rg_splunk_jp.name
+  location            = azurerm_resource_group.rg_splunk.location
+  resource_group_name = azurerm_resource_group.rg_splunk.name
   ip_address_type     = "public"
   dns_name_label      = each.value.name
   os_type             = "linux"
@@ -90,8 +69,8 @@ resource "azurerm_container_group" "common-instances" {
 # create heavy forwarder
 resource "azurerm_container_group" "heavyforwarder" {
   name                = var.heavyforwarder
-  location            = azurerm_resource_group.rg_splunk_kr.location
-  resource_group_name = azurerm_resource_group.rg_splunk_kr.name
+  location            = azurerm_resource_group.rg_splunk.location
+  resource_group_name = azurerm_resource_group.rg_splunk.name
   ip_address_type     = "public"
   dns_name_label      = var.heavyforwarder
   os_type             = "linux"
@@ -129,12 +108,57 @@ resource "azurerm_container_group" "heavyforwarder" {
 }
 
 
+
+#create deployer, parameters are the same as Search Head Clustering except it's in a different location
+resource "azurerm_container_group" "deployer_server" {
+  name                = var.deployer
+  location            = azurerm_resource_group.rg_splunk.location
+  resource_group_name = azurerm_resource_group.rg_splunk.name
+  ip_address_type     = "public"
+  dns_name_label      = var.deployer
+  os_type             = "linux"
+
+  container {
+    name   = var.container_name
+    image  = var.docker_image_name
+    cpu    = local.sh_cpu
+    memory = local.sh_ram
+    ports {
+      port     = local.webport
+      protocol = "TCP"
+    }
+    ports {
+      port     = local.mgmtport
+      protocol = "TCP"
+    }
+    ports {
+      port     = local.kvport
+      protocol = "TCP"
+    }
+    ports {
+      port     = local.replicationport
+      protocol = "TCP"
+    }
+    environment_variables = {
+      SPLUNK_START_ARGS        = "--accept-license"
+      SPLUNK_PASSWORD          = var.login_password 
+    }
+  }
+
+  tags = {
+    environment = var.environment
+  }
+}
+
+
+
 #create 5 search heads
 resource "azurerm_container_group" "shc" {
   for_each = var.searchhead_clustering
   name                = each.value.name
-  location            = azurerm_resource_group.rg_splunk_ue.location
-  resource_group_name = azurerm_resource_group.rg_splunk_ue.name
+  #location            = azurerm_resource_group.rg_splunk.location
+  location            = local.location_shc
+  resource_group_name = azurerm_resource_group.rg_splunk.name
   ip_address_type     = "public"
   dns_name_label      = each.value.name
   os_type             = "linux"
@@ -176,7 +200,8 @@ resource "azurerm_container_group" "shc" {
 resource "azurerm_container_group" "idxc" {
   for_each = var.index_clustering
   name                = each.value.name
-  location            = azurerm_resource_group.rg_splunk.location
+  #location            = azurerm_resource_group.rg_splunk.location
+  location            = local.location_idxc
   resource_group_name = azurerm_resource_group.rg_splunk.name
   ip_address_type     = "public"
   dns_name_label      = each.value.name
