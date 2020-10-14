@@ -55,7 +55,7 @@ locals {
     idx_cpu = 2
     idx_ram = 2
     webport = 8000
-    kvport = 8091
+    kvport = 8191
     mgmtport = 8089
     replicationport = 9200
     listenport = 9997
