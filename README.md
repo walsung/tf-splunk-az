@@ -1,6 +1,8 @@
 # splunk-azure
 
-Pre-requisite knowledge: Terraform, Azurerm 2.0, Azure Fundamental
+Pre-requisite knowledge: Terraform Cloud key management, Azurerm 2.0, Azure Fundamental
+
+Main.tf is using Terraform remote backend to managing subscription-id and tenant-id to connect to Azure cloud, therefore you will need to modify the first stanza in main.tf to login Azure.
 
 !!Caveat!!
 This is for proof-of-concept of building a simulation of Splunk clustering architecture by creating 13 ACIs (Azure Container Instances) in Azure Infrastructure. All ip addresses are external-facing and using Azure public DNS to resolve ip address, hence DO NOT ingest any sensitive data or production logs into the indexers. 
