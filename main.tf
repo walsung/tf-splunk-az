@@ -136,7 +136,7 @@ resource "azurerm_container_group" "deployer_server" {
       protocol = "TCP"
     }
     ports {
-      port     = local.replicationport
+      port     = local.replicationport_shc
       protocol = "TCP"
     }
     environment_variables = {
@@ -181,7 +181,7 @@ resource "azurerm_container_group" "shc" {
       protocol = "TCP"
     }
     ports {
-      port     = local.replicationport
+      port     = local.replicationport_shc
       protocol = "TCP"
     }
     environment_variables = {
@@ -225,7 +225,7 @@ resource "azurerm_container_group" "idxc" {
       protocol = "TCP"
     }
     ports {
-      port     = local.replicationport
+      port     = local.replicationport_idx
       protocol = "TCP"
     }
     environment_variables = {
