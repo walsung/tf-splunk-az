@@ -19,10 +19,10 @@ Below is the architecture diagram where license-master also acts as deployment s
 Total 13 containers will be created from Terraform template:
 Instance | Amount | Container Hardware | Opening Ports | Region
 -------- | ------ | ------------------ | ------------- | ------
-license master + monitoring console + deployment server combine into 1 box | 1 | cpu 2 ram 2 | 8000 8089 | Japan East
+license master + monitoring console + deployment server combine into 1 box | 1 | cpu 2 ram 2gb | 8000 8089 | Japan East
 deployer | 1 | cpu 2 ram 2gb | 8000 8089 8191 | Japan East
 search head and captain | 5 | cpu 2 ram 2gb | 8000 8089 8191 replication: 4001 | Australia East
-master node | 1 | cpu 2 ram2gb | 8000 8089 | Japan East		
+master node | 1 | cpu 2 ram 2gb | 8000 8089 | Japan East		
 indexer | 4 | cpu 2 ram 2gb | 8000 8089 replication: 9200  s2s:9997 | North Central US
 heavy forwarder | 1 | cpu 2 ram 2gb | 8000 8089 udp514 hec:8088 | Japan East
 
