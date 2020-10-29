@@ -22,20 +22,19 @@ Here’s the opening ports on each ACI
 ## Pros and Cons about building a test environment in Azure ACI
 #### Pros:
 * Quick and easy to spin up a bunch of containers
-* Easily destroy the entire environment with command “terraform destroy –auto-approve
+* Easily destroy the entire environment with command `terraform destroy –auto-approve`
 * All containers have external public ip so that you can demonstrate your architecture plan to your customers, however you may spend extra work to harden the environment with Azure NSG and firewall which aren’t covered in this article. Azure Firewall is actually quite expensive too keep it running all the time. 
 * Each container can be accessed easily with Azure cloud shell, no need to set up SSH key like AWS does.
 * Azure real-time log analysis is more intuitive
-* It’s a pain in the butt to get Terraform Vault working to securely store your IAM keys or Azure keyvaults. Terraform Cloud has an online keyvault feature which is more intuitive to set up and can work across multiple devices because the keys are stored in the cloud. We entrust Terraform Cloud to keep the keys safe. If it were a production environment, it’s highly recommended to set up Terraform Vault and keep your IAM keys on-prem. 
+* It’s a pain in the butt to get Terraform Vault working to securely store your IAM keys or Azure keyvaults. Terraform Cloud has an online keyvault feature which is more intuitive to set up and can work across multiple devices because the keys are stored in the cloud. We entrust Terraform Cloud to keep the keys safe. If it were a production environment, it’s highly recommended to set up Terraform Vault and keep your IAM keys on-prem. There are several methods to control Terraform Cloud sets up Azure keyvault is at https://cloudskills.io/blog/terraform-azure-04.
 
 #### Cons:
 * Since all ACIs are external facing, do not put production data in the test environment, or you have to sanitize your data before ingesting in. You can disable web GUI for indexers at the backend with command _./splunk disable webserver_
 * If you want to scale up for more ACIs, edit the Terraform main.rf template to scale up more containers in different Azure regions. Each Azure region only supports up to 10 CPU cores running, and since each container takes 2 cpu cores, maximum 5 ACIs can be run per region. 
 * Not every region supports container group. For the availability, refer to document: https://docs.microsoft.com/en-us/azure/container-instances/container-instances-region-availability
 * Each Azure region charges container group per hour differently, I find EAST US 2 sometimes is the cheapest. Price can be compared at https://azure.microsoft.com/en-au/pricing/details/container-instances/
-
-
-
+* Horizontal scaling isn't as flexible as kubenetes pods
+* Harder to create persistent volume than kubenetes PVC. Not going to cover in this article
 
 
 ## Pre-requisite
@@ -44,12 +43,13 @@ Here’s the opening ports on each ACI
 3. Azure CLI can be run on local or on cloud shell
 4. Highly recommended to set multi-factor authencation to Azure and Terraform accounts
 
+
 ## How to run Terraform template
 1. Install the latest version of Terraform binary. https://www.terraform.io/downloads.html. By the time this article was written, I was using Terraform version 0.13.4
 2. Azurerm version is , more Azure provider commands can be found from https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
 3. Log in Terraform Cloud, create a new Workspace
 4. Make a name for your new Workspace, choose the second option “CLI-driven workflow”
-5. Main.tf is using Terraform remote backend to managing subscription-id and tenant-id to connect to Azure cloud, therefore you will need to modify the first stanza in main.tf to login Azure. Open main.rf, edit the backend stanza to suit your Terraform Cloud’s organization name and workspace name
+5. Main.tf is using Terraform remote backend to managing subscription-id and tenant-id to connect to Azure cloud, therefore you will need to modify the first stanza in main.tf to login Azure. Open main.rf, edit the backend stanza to suit your Terraform Cloud’s organization name and workspace name. Below is an example:
 
 ```
 terraform {
@@ -65,16 +65,41 @@ terraform {
 
 6. Since test environment is disposable and it doesn’t worth the effect to set up Terraform Vault on-prem. Terraform Cloud provides an easy solution to store Azure keys. 
 
-Run xxxx command in 
-
-Go back to Terraform Cloud and open your Workspace, on the menu bar, click on Variables. 
-Terraform Variable can replace your local variables.tfvars, that’s where you put in Azure subscription id and tenant id
-Environment Variables allows the backend connecting and authenticating with Azure. Run the command and manually type in xxxxxxxxxx    .    Set the key to sensitive so that nobody can read the value even if your Terraform Cloud account is compromised. 
+    Run `az account show` command in Azure CLI to check your tenant id.
+    Run this command to get `az ad sp create-for-rbac -n "TerraformSP" --role contributor \
+  --scopes /subscriptions/<your tenant id>`. This command means that configuring the service principal with contributor rights at the root of the subscription. It's convenient to do in a test environment but not a best practise to do in a production environment. 
+    
+    The result should be similar to
+    ```
+    {
+        "appId": "73340a90-5cf7-49fa-a596-87692fa6a8b6",
+        "displayName": "TerraformSP",
+        "name": "http://TerraformSP",
+        "password": "SbkLDBITXpQRCahwVb_jV4rIvHeON4JhsU",
+        "tenant": "53c4e8cf-11c1-4455-a96e-4051e3c42137"
+    }
+    ```
+    In Terraform's environment variable names should be corresponding to:
+    ```
+    ARM_CLIENT_ID="73340a90-5cf7-49fa-a596-87692fa6a8b6"
+    ARM_CLIENT_SECRET="SbkLDBITXpQRCahwVb_jV4rIvHeON4JhsU"
+    ARM_SUBSCRIPTION_ID="59110615-c3e2-4cfc-8c4d-a0f9765fbdee"
+    ARM_TENANT_ID="53c4e8cf-11c1-4455-a96e-4051e3c42137"
+    ```
+7. Go back to Terraform Cloud and open your Workspace, on the menu bar, click on Variables. 
+    Terraform Variable can replace your local variables.tfvars, that’s where you put in Azure subscription id and tenant id
+    Environment Variables allows the backend connecting and authenticating with Azure. Manually type in environment variables. Set the key to sensitive so that nobody can read the value even if your Terraform Cloud account is compromised. 
 ![Screenshot](screenshots/variables.png)
 
-7. Then can run the commands like ‘terraform init’, ‘terraform plan’, ‘terraform apply’ locally
-Enjoy~~~!
+8. Then can run the commands like `terraform init`, `terraform plan`, `terraform apply` locally.
 
-## Paramaters
+
+## Variables
+- Can scale up or down the numbers of search head or indexer by going into variables.tf, under "searchhead_clustering" and "index_clustering" to add more sh{number} and idx{number}. Maximum is 5 on each because the limitation of available CPU cores in each Azure region. 
+
+
+## Troubleshootings
+1. Sometimes Azure gets stucked in creating container, you have to manually delete the container and then run `terrform apply` again. 
+2. Data and config don't stay when the container is destroyed. But can be workaround with storage-account. 
 
 
