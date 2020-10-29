@@ -14,7 +14,7 @@ location_idxc
 location_shc
 
 Below is the architecture diagram where license-master also acts as deployment server and monitoring console
-![Screenshot](splunk.png)
+![Screenshot](screenshots/splunk.png)
 
 
 
@@ -50,6 +50,8 @@ How to run Terraform template
     3. Log in Terraform Cloud, create a new Workspace
     4. Make a name for your new Workspace, choose the second option “CLI-driven workflow”
     5. Open main.rf, edit the backend stanza to suit your Terraform Cloud’s organization name and workspace name
+
+```
 terraform {
   backend "remote" {
     organization = "eclipse13"
@@ -59,6 +61,7 @@ terraform {
     }
   }
 }
+```
 
     6. Since test environment is disposable and it doesn’t worth the effect to set up Terraform Vault on-prem. Terraform Cloud provides an easy solution to store Azure keys. 
 
@@ -70,10 +73,11 @@ Environment Variables allows the backend connecting and authenticating with Azur
 
 
 
-Paramaters
-
 
 
     7. Then can run the commands like ‘terraform init’, ‘terraform plan’, ‘terraform apply’ locally
 Enjoy~~~!
+
+Paramaters
+
 
