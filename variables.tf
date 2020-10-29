@@ -57,8 +57,8 @@ locals {
     webport = 8000
     kvport = 8191
     mgmtport = 8089
-    replicationport_shc = 9200
-    replicationport_idx = 9100
+    replicationport_shc = 4001
+    replicationport_idx = 9200
     listenport = 9997
     hecport = 8088
     sshport = 22

@@ -17,6 +17,17 @@ Below is the architecture diagram where license-master also acts as deployment s
 
 
 Here’s the opening ports on each ACI
+Instance | Amount | Container Hardware | Opening Ports | Region
+-------- | ------ | ------------------ | ------------- | ------
+license master + monitoring console + deployment server | 1 | cpu 2 ram 2 | 8000 8089 | Japan East
+deployer | 1 | cpu 2 ram 2 | 8000 8089 8191 | Japan East
+search head and captain | 5 | cpu 2 ram 2 | 8000 8089 8191 replication: 4001 | Australia East
+master node | 1 | cpu 2 ram2 | 8000 8089 | Japan East		
+indexer | 4 | cpu 2 ram 2 | 8000 8089 replication: 9200  s2s:9997 | North Central US
+heavy forwarder | 1 | cpu 2 ram 2 | 8000 8089 udp514 hec:8088 | Japan East
+
+
+Login username and password for all Splunk instances are `changeme`. This can be modified under variables.tf and "login_password".
 
 
 ## Pros and Cons about building a test environment in Azure ACI
@@ -66,8 +77,7 @@ terraform {
 6. Since test environment is disposable and it doesn’t worth the effect to set up Terraform Vault on-prem. Terraform Cloud provides an easy solution to store Azure keys. 
 
     Run `az account show` command in Azure CLI to check your tenant id.
-    Run this command to get `az ad sp create-for-rbac -n "TerraformSP" --role contributor \
-  --scopes /subscriptions/<your tenant id>`. This command means that configuring the service principal with contributor rights at the root of the subscription. It's convenient to do in a test environment but not a best practise to do in a production environment. 
+    Run this command to get `az ad sp create-for-rbac -n "TerraformSP" --role contributor --scopes /subscriptions/<your tenant id>`. This command means that configuring the service principal with contributor rights at the root of the subscription. It's convenient to do in a test environment but not a best practise to do in a production environment. 
     
     The result should be similar to
     ```
