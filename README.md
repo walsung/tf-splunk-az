@@ -4,7 +4,7 @@ This article covers 2 topics:
 1. Build a Splunk test environment with 13 Azure Container Instances (ACIs) using Terraform
 2. Terraform Cloud key management
 
-What are *NOT* covered in this article:
+What are **NOT** covered in this article:
 1. How to cluster all Splunk instances together
 2. Basic commands of Azure and Terraform
 3. How to set up Azure NSG and firewall
