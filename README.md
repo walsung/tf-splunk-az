@@ -1,18 +1,18 @@
-# Proof-of-concept: Set up a Splunk test cluster environment in Azure and demonstrate the keyvault management via Terraform Cloud
+# Proof-of-concept: Prepare a Splunk test cluster environment in Azure and demonstrate the keyvault management via Terraform Cloud
 
 This article covers 2 topics: 
 1. Build a Splunk test environment with 13 Azure Container Instances (ACIs) using Terraform
 2. Terraform Cloud key management
 
 What are **NOT** covered in this article:
-1. How to cluster all Splunk instances together
-2. Basic commands of Azure and Terraform
+1. How to cluster bundle all Splunk instances together
+2. Basic commands of Azure, Terraform, Splunk
 3. How to set up Azure NSG and firewall
 4. How to set up persistent volume
 
 
 ## Introduction
-This is for proof-of-concept of building a test environment of Splunk clustering by creating 13 ACIs (Azure Container Instances) in Azure Icloud. All ip addresses are external-facing and using Azure public DNS to resolve ip address, hence DO NOT ingest any sensitive data or production logs into the indexers. Azure's access key will be stored in Terraform Cloud to authenticate with Azure account.
+This is for proof-of-concept of preparing a test environment of Splunk clustering by creating 13 ACIs (Azure Container Instances) in Azure Icloud. Each container has pulled the public image of latest version of Splunk standalone version. All ip addresses are external-facing and using Azure public DNS to resolve ip address, which is easily accesible by your customers. Azure's access key will be stored in Terraform Cloud to authenticate with Azure account.
 
 Each Azure region only allows up to 10 cpus for creating ACI, therefore index clustering and search head clustering are created in separate region. These can be modified by local variable.
 location_idxc
@@ -38,18 +38,18 @@ Login username and password for all Splunk instances are `changeme`. This can be
 
 ## Pros and Cons about building a test environment in Azure ACI
 #### Pros:
-* Quick and easy to spin up a bunch of containers
-* Easily destroy the entire environment with command `terraform destroy –auto-approve`
+* Quicker and easier to spin up a bunch of containers than AKS (Azure Kubernetes Service)
+* Easily destroy the entire environment with command `terraform destroy --auto-approve`
 * All containers have external public ip so that you can demonstrate your architecture plan to your customers, however you may spend extra work to harden the environment with Azure NSG and firewall which aren’t covered in this article. Azure Firewall is actually quite expensive too keep it running all the time. 
 * Each container can be accessed easily with Azure cloud shell, no need to set up SSH key like AWS does.
 * Azure real-time log analysis is more intuitive
-* It’s a pain in the butt to get Terraform Vault working to securely store your IAM keys or Azure keyvaults. Terraform Cloud has an online keyvault feature which is more intuitive to set up and can work across multiple devices because the keys are stored in the cloud. We entrust Terraform Cloud to keep the keys safe. If it were a production environment, it’s highly recommended to set up Terraform Vault and keep your IAM keys on-prem. There are several methods to control Terraform Cloud sets up Azure keyvault is at https://cloudskills.io/blog/terraform-azure-04.
+* It’s a pain in the butt to get Terraform Vault working to securely store your IAM keys or Azure keyvaults. Terraform Cloud has an online keyvault feature which is more intuitive to set up and can work across multiple devices because the keys are stored in the cloud. We entrust Terraform Cloud to keep the keys safe. If it were a production environment, it’s highly recommended to set up Terraform Vault and keep your IAM keys on-prem. There are several other methods to control Terraform Cloud sets up Azure keyvault, further reading is at https://cloudskills.io/blog/terraform-azure-04.
 
 #### Cons:
-* Since all ACIs are external facing, do not put production data in the test environment, or you have to sanitize your data before ingesting in. You can disable web GUI for indexers at the backend with command _./splunk disable webserver_
+* Since all ACIs are external facing, **do not** ingest production data in the test environment, or you have to sanitize your data before ingesting in. You can disable web GUI for indexers at the backend with command `./splunk disable webserver` at _/opt/splunk/bin_ directory
 * If you want to scale up for more ACIs, edit the Terraform main.rf template to scale up more containers in different Azure regions. Each Azure region only supports up to 10 CPU cores running, and since each container takes 2 cpu cores, maximum 5 ACIs can be run per region. 
 * Not every region supports container group. For the availability, refer to document: https://docs.microsoft.com/en-us/azure/container-instances/container-instances-region-availability
-* Each Azure region charges container group per hour differently, I find EAST US 2 sometimes is the cheapest. Price can be compared at https://azure.microsoft.com/en-au/pricing/details/container-instances/
+* Each Azure region charges container group per hour differently, EAST US 2 seems to be the cheapest. Price can be compared at https://azure.microsoft.com/en-au/pricing/details/container-instances/
 * Horizontal scaling isn't as flexible as kubenetes pods
 * Harder to create persistent volume than kubenetes PVC. Not going to cover in this article
 
