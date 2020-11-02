@@ -109,6 +109,8 @@ terraform {
 
 8. Then can run the commands like `terraform init`, `terraform plan`, `terraform apply` locally.
 
+9. The success result should create an Azure resource group called "rg-splunk" whose region is set to Japan East and 13 ACIs are built. Each ACI has their ports open and with unique public-ip address. 
+
 
 ## Variables
 - Can scale up or down the numbers of search head or indexer by going into variables.tf, under "searchhead_clustering" and "index_clustering" to add more sh{number} and idx{number}. Maximum is 5 on each because the limitation of available CPU cores in each Azure region. 
