@@ -56,7 +56,7 @@ Login username and password for all Splunk instances are `changeme`. This can be
 
 ## Pre-requisite
 1. You need to register an Azure account. https://portal.azure.com, install Azure CLI locally
-2. You need to register a Terraform Cloud account. https://app.terraform.io/
+2. You need to register a Terraform Cloud account. https://app.terraform.io/, create Workspaces, create API token
 3. Azure CLI can be run on local or on cloud shell
 4. Highly recommended to set multi-factor authencation to Azure and Terraform accounts
 
@@ -124,6 +124,8 @@ terraform {
 4. Sometimes Azure may get stucked when creating the container. It shows the container as "Creating" or "Pending" status, and then you will need to manually delete the pending containers and re-run `terraform apply` again. 
 ![Screenshot](screenshots/creating.png)
 
-5. When you `terraform apply`, you see message "Error: Apply not allowed for workspaces with a VCS connection". It means that your workspace has been synced with Github versioning control. You have to log in Terraform Cloud, go to 'Runs', find the "curent run" labeled with "Needs Confirmation" to manually click on 'Apply' button
+5. When you `terraform apply`, you see message "Error: Apply not allowed for workspaces with a VCS connection". It means that your workspace has been synced with Github versioning control. You have to log in Terraform Cloud to manage the confirmations. Go to 'Runs', find the "curent run" labeled with "Needs Confirmation" to manually click on 'Apply' button
 ![Screenshot](screenshots/manual_apply.png)
+
+6. Unable to `terraform destroy` after VCS is set up. Log in Terraform Cloud, go to Settings > Destruction and Deletion > Queue destroy plan. Will need to go back to 'Runs' and then 'Confirm & Apply'
 
