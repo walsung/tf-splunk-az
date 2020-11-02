@@ -105,7 +105,7 @@ terraform {
 7. Go back to Terraform Cloud and open your Workspace, on the menu bar, click on Variables. 
     Terraform Variable can replace your local variables.tfvars, that’s where you put in Azure subscription id and tenant id
     Environment Variables allows the backend connecting and authenticating with Azure. Manually type in environment variables. Set the key to sensitive so that nobody can read the value even if your Terraform Cloud account is compromised. 
-![Screenshot](screenshots/variables.png)
+![Screenshot](screenshots/environment.png)
 
 8. Then can run the commands like `terraform init`, `terraform plan`, `terraform apply` locally.
 
@@ -116,9 +116,14 @@ terraform {
 
 ## Troubleshootings
 1. Sometimes Azure gets stucked in creating container, you have to manually delete the container and then run `terrform apply` again. 
+
 2. Data and config don't stay when the container is destroyed. But can be workaround with storage-account. 
+
 3. If terraform encounters problem like `Error parsing json result from the Azure CLI: Error launching Azure CLI: exec: "az": executable file not found in $PATH`  , probably your AZ Login contains multiple accounts. Confirm you have multiple accounts by `az account list`, you will need to set one as `az account set --subscription="SUBSCRIPTION_ID"`
+
 4. Sometimes Azure may get stucked when creating the container. It shows the container as "Creating" or "Pending" status, and then you will need to manually delete the pending containers and re-run `terraform apply` again. 
 ![Screenshot](screenshots/creating.png)
 
+5. When you `terraform apply`, you see message "Error: Apply not allowed for workspaces with a VCS connection". It means that your workspace has been synced with Github versioning control. You have to log in Terraform Cloud, go to 'Runs', find the "curent run" labeled with "Needs Confirmation" to manually click on 'Apply' button
+![Screenshot](screenshots/manual_apply.png)
 
