@@ -117,5 +117,8 @@ terraform {
 ## Troubleshootings
 1. Sometimes Azure gets stucked in creating container, you have to manually delete the container and then run `terrform apply` again. 
 2. Data and config don't stay when the container is destroyed. But can be workaround with storage-account. 
+3. If terraform encounters problem like `Error parsing json result from the Azure CLI: Error launching Azure CLI: exec: "az": executable file not found in $PATH`  , probably your AZ Login contains multiple accounts. Confirm you have multiple accounts by `az account list`, you will need to set one as `az account set --subscription="SUBSCRIPTION_ID"`
+4. Sometimes Azure may get stucked when creating the container. It shows the container as "Creating" or "Pending" status, and then you will need to manually delete the pending containers and re-run `terraform apply` again. 
+![Screenshot](screenshots/creating.png)
 
 
