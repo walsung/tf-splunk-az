@@ -33,7 +33,7 @@ indexer | 4 | cpu 2 ram 2gb | 8000 8089 replication: 9200  s2s:9997 | North Cent
 heavy forwarder | 1 | cpu 2 ram 2gb | 8000 8089 udp514 hec:8088 | Japan East
 
 
-Login username and password for all Splunk instances are `changeme`. This can be modified under variables.tf and "login_password".
+Login username is `admin` and password for all Splunk instances is `changeme`. This can be modified under variables.tf and "login_password".
 
 
 ## Pros and Cons about building a test environment in Azure ACI
