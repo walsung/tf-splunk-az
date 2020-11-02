@@ -83,7 +83,7 @@ terraform {
 6. Since test environment is disposable and it doesn’t worth the effect to set up Terraform Vault on-prem. Terraform Cloud provides an easy solution to store Azure keys. 
 
     Run `az account show` command in Azure CLI to check your tenant id.
-    Run this command to get `az ad sp create-for-rbac -n "TerraformSP" --role contributor --scopes /subscriptions/<your tenant id>`. This command means that configuring the service principal with contributor rights at the root of the subscription. It's convenient to do in a test environment but not a best practise to do in a production environment. 
+    Run this command to get `az ad sp create-for-rbac -n "TerraformSP" --role contributor --scopes /subscriptions/<your id>`. **id is your subscription id, not the tenant id.**. This command means that configuring the service principal with contributor rights at the root of the subscription. It's convenient to do in a test environment but not a best practise to do in a production environment. 
     
     The result should be similar to
     ```
@@ -95,12 +95,12 @@ terraform {
         "tenant": "53c4e8cf-11c1-4455-a96e-4051e3c42137"
     }
     ```
-    In Terraform's environment variable names should be corresponding to:
+    Login Terraform Cloud on https://app.terraform.io/ and open your workspace. In Terraform's environment variable names should be corresponding to:
     ```
-    ARM_CLIENT_ID="73340a90-5cf7-49fa-a596-87692fa6a8b6"
-    ARM_CLIENT_SECRET="SbkLDBITXpQRCahwVb_jV4rIvHeON4JhsU"
-    ARM_SUBSCRIPTION_ID="59110615-c3e2-4cfc-8c4d-a0f9765fbdee"
-    ARM_TENANT_ID="53c4e8cf-11c1-4455-a96e-4051e3c42137"
+    ARM_CLIENT_ID="73340a90-5cf7-49fa-a596-87692fa6a8b6"         (appId)
+    ARM_CLIENT_SECRET="SbkLDBITXpQRCahwVb_jV4rIvHeON4JhsU"       (password)
+    ARM_SUBSCRIPTION_ID="59110615-c3e2-4cfc-8c4d-a0f9765fbdee"   (subscription id)
+    ARM_TENANT_ID="53c4e8cf-11c1-4455-a96e-4051e3c42137"         (tenant id)
     ```
 7. Go back to Terraform Cloud and open your Workspace, on the menu bar, click on Variables. 
     Terraform Variable can replace your local variables.tfvars, that’s where you put in Azure subscription id and tenant id
