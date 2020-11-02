@@ -1,18 +1,6 @@
 
 
 
-variable "subscription_id" {
-  type = string
-  description = "Azure subscription id, can be found by command: az account show"
-}
-
-variable "tenant_id" {
-  type = string
-  description = "Azure tenant id, can be found by command: az account show"
-}
-
-
-
 
 variable "resource_group_name" {
   type        = string
