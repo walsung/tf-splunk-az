@@ -4,7 +4,7 @@ terraform {
     organization = "eclipse13"
 
     workspaces {
-      name = "terr-cloud"
+      name = "tf-splunk-az"
     }
   }
 }

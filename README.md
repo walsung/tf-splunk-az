@@ -71,10 +71,10 @@ Login username and password for all Splunk instances are `changeme`. This can be
 ```
 terraform {
   backend "remote" {
-    organization = "eclipse13"
+    organization = "<your terraform cloud username>"
 
     workspaces {
-      name = "test"
+      name = "tf-splunk-az"
     }
   }
 }
