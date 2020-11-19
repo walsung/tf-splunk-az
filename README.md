@@ -18,7 +18,7 @@ Each Azure region only allows up to 10 cpus for creating ACI, therefore index cl
 location_idxc
 location_shc
 
-Below is the architecture diagram where license-master also acts as deployment server and monitoring console. The sample architecture diagram is a typical SVA M14 (multi-sites and indexer+search head clustering). Terraform template is scalable to fit your test environment by increasing or decreasing the numbers of containers, or even split up more roles of standalone instance. More samples of Splunk validated architecture (SVA) can be refer to document: https://www.splunk.com/pdfs/technical-briefs/splunk-validated-architectures.pdf.
+Below is the architecture diagram where license-master also acts as deployment server and monitoring console. The sample architecture diagram is a typical SVA M4(multi-sites and indexer+search head clustering). Terraform template is scalable to fit your test environment by increasing or decreasing the numbers of containers, or even split up more roles of standalone instance. More samples of Splunk validated architecture (SVA) can be refer to document: https://www.splunk.com/pdfs/technical-briefs/splunk-validated-architectures.pdf.
 ![Screenshot](screenshots/splunk.png)
 
 
